@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System;
 
 public class Controller : MonoBehaviour
 {
@@ -39,7 +40,7 @@ public class Controller : MonoBehaviour
 	public bool InShop = false;
 	private int fireBullet = 0;
 	private int poisonBullet = 0;
-
+	private float shieldtime = 0;
 
 
 	IEnumerator StartGravity()
@@ -103,6 +104,11 @@ public class Controller : MonoBehaviour
 		{
 			poisonBullet += 5;
 		}
+		if (Input.GetKeyUp(KeyCode.Alpha4) && inventory.RemoveItem(Item.Shield, 1))
+		{
+			shieldtime = 30;
+			spriteRenderer.color = new Color32(100, 150, 255, 255);
+		}
 
 		if (Input.GetKeyUp(KeyCode.Alpha5) && inventory.RemoveItem(Item.Mine, 1))
 		{
@@ -122,6 +128,15 @@ public class Controller : MonoBehaviour
 			Score.text = "0";
 
 		}
+		if (shieldtime > 0)
+        {
+			shieldtime -= Time.deltaTime;
+			if (shieldtime <= 0)
+            {
+				spriteRenderer.color = new Color32(255, 255, 255, 255);
+            }
+        }
+		
 
 		if (health <= 0)
 		{
@@ -217,6 +232,7 @@ public class Controller : MonoBehaviour
 
 	public void HitPlayer(int force)
 	{
+		if (shieldtime > 0) return;
 		health -= force;
 		if (health > 0) return;
 
